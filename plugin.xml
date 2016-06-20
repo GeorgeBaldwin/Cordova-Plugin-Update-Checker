@@ -22,7 +22,7 @@
       </feature>
     </config-file>
 
-    <source-file src="src/android/Hello.java" target-dir="src/com/gbos/cordova/plugin/"/>
+    <source-file src="src/android/UpdateCheck.java" target-dir="src/com/gbos/cordova/plugin/"/>
   </platform>
 
   <platform name="ios">
