@@ -6,7 +6,7 @@
 {
 
     NSString* callbackId = [command callbackId];
-    NSString* action = [[command arguments] objectAtIndex:0];
+    NSString* appId = [[command arguments] objectAtIndex:0];
 
 
 
@@ -29,6 +29,39 @@
 - (void)finishLaunching:(NSNotification *)notification
 {
     // Put here the code that should be on the AppDelegate.m
+
+
+    let alert = UIAlertController(title: "Hello!", message: "Message", preferredStyle: UIAlertControllerStyle.Alert)
+	let alertAction = UIAlertAction(title: "OK!", style: UIAlertActionStyle.Default) 
+	{ 
+	   // (UIAlertAction) -> Void in   
+	}
+
+
+  
 }
+
+-(void)openItunes:(NSString*)storeId
+{
+	NSString *iTunesLink = @"https://itunes.apple.com/us/app/apple-store/id" + storeId + "?mt=8";
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:iTunesLink]];
+}
+
+
+-(void)alertMessage:(NSString*)message
+{
+    UIAlertController* alert = [UIAlertController
+          alertControllerWithTitle:@"Alert"
+          message:message
+          preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction* defaultAction = [UIAlertAction 
+          actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+         handler:^(UIAlertAction * action) {}];
+
+    [alert addAction:defaultAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 
 @end

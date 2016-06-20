@@ -4,7 +4,7 @@ import org.apache.cordova.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-public class UpdateCheck extends CordovaPlugin {
+public class UpdateCheck extends CordovaPlugin implements ServiceConnection {
 
     @Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
@@ -25,5 +25,19 @@ public class UpdateCheck extends CordovaPlugin {
             return false;
 
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedIFinally,nstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Bind the service when the activity is created
+        getApplicationContext().bindService(new Intent(this, MetaWearBleService.class),
+                this, Context.BIND_AUTO_CREATE);
+
+        // Check bundle and validate update has occured... reset flag.
+
+        
     }
 }
