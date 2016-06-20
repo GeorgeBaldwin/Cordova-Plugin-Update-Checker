@@ -17,6 +17,7 @@ public class UpdateCheck extends CordovaPlugin {
             // Send message to client...
             callbackContext.success(message);
 
+            // Return true to cordova
             return true;
 
         } else {
