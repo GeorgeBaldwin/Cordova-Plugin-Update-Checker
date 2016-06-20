@@ -28,14 +28,14 @@
   <platform name="ios">
     
     <config-file target="config.xml" parent="/widget">
-      <feature name="Hello">
-        <param name="ios-package" value="HWPHello" />
+      <feature name="UpdateCheck">
+        <param name="ios-package" value="UpdateCheck" />
         <param name="onload" value="true" />
       </feature>
     </config-file>
 
-    <header-file src="src/ios/HWPHello.h" target-dir="HelloPlugin"/>
-    <source-file src="src/ios/HWPHello.m" target-dir="HelloPlugin"/>
+    <header-file src="src/ios/UpdateCheck.h" target-dir="UpdateCheckPlugin"/>
+    <source-file src="src/ios/UpdateCheck.m" target-dir="UpdateCheckPlugin"/>
   </platform>
 
 </plugin>
