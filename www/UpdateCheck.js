@@ -1,8 +1,8 @@
 /*global cordova, module*/
 
 module.exports = {
-    checkUpdate: function (name, successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "Hello", "Check", [name]);
+    UpdateCheck: function (name, successCallback, errorCallback) {
+        cordova.exec(successCallback, errorCallback, "UpdateCheck", "check", [name]);
     },
     successCallback : function(data){
         // Handle success here
@@ -12,4 +12,4 @@ module.exports = {
     }
 };
 
-window.check_for_app_update = checkUpdate;
+window.updateCheck = module.exports.UpdateCheck;

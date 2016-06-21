@@ -2,87 +2,86 @@
 
 @implementation UpdateCheck
 
+@synthesize appId=_appId;
+
 - (void)check:(CDVInvokedUrlCommand*)command
 {
-
     NSString* callbackId = [command callbackId];
-    NSString* appId = [[command arguments] objectAtIndex:0];
-
-
-
-    NSString* result = "";
-    CDVPluginResult* result = [CDVPluginResult
-                               resultWithStatus:CDVCommandStatus_OK
-                               messageAsString:msg];
-
+    NSString* action = [[command arguments] objectAtIndex:0];
+    
+    [self needsUpdate];
+    
+    NSString* result = @"";
     [self success:result callbackId:callbackId];
 }
 
 
 - (void)pluginInitialize
 {
-
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
-
 }
 
 - (void)finishLaunching:(NSNotification *)notification
 {
-    // Put here the code that should be on the AppDelegate.m
-
-
-    let alert = UIAlertController(title: "Hello!", message: "Message", preferredStyle: UIAlertControllerStyle.Alert)
-	let alertAction = UIAlertAction(title: "OK!", style: UIAlertActionStyle.Default) 
-	{ 
-	   // (UIAlertAction) -> Void in   
-	}
-
-
-  
+    [self needsUpdate];
 }
 
--(void)openItunes:(NSString*)storeId
+
+-(void)openItunes
 {
-	NSString *iTunesLink = @"https://itunes.apple.com/us/app/apple-store/id" + storeId + "?mt=8";
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:iTunesLink]];
+    NSString *url = [NSString stringWithFormat:@"itms-apps://itunes.apple.com/app/id%@?mt=8", _appId];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
 }
-
-<<<<<<< Updated upstream
 
 -(void)alertMessage:(NSString*)message
 {
-    UIAlertController* alert = [UIAlertController
-          alertControllerWithTitle:@"Alert"
-          message:message
-          preferredStyle:UIAlertControllerStyleAlert];
-
-    UIAlertAction* defaultAction = [UIAlertAction 
-          actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-         handler:^(UIAlertAction * action) {}];
-
-    [alert addAction:defaultAction];
-    [self presentViewController:alert animated:YES completion:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Update Available"
+                                                    message:@"In order to use this application, you must update to the latest version in the app store."
+                                                   delegate:self
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+}
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0) {
+        [self openItunes];
+    }
+    else if (buttonIndex == 1) {
+        NSLog(@"OK Tapped. Hello World!");
+    }
 }
 
-
-=======
 -(BOOL) needsUpdate{
     NSDictionary* infoDictionary = [[NSBundle mainBundle] infoDictionary];
     NSString* appID = infoDictionary[@"CFBundleIdentifier"];
     NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://itunes.apple.com/lookup?bundleId=%@", appID]];
     NSData* data = [NSData dataWithContentsOfURL:url];
     NSDictionary* lookup = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-
+    
     if ([lookup[@"resultCount"] integerValue] == 1){
         NSString* appStoreVersion = lookup[@"results"][0][@"version"];
         NSString* currentVersion = infoDictionary[@"CFBundleShortVersionString"];
+        _appId  = lookup[@"results"][0][@"trackId"];
+        
         if (![appStoreVersion isEqualToString:currentVersion]){
-            NSLog(@"Need to update [%@ != %@]", appStoreVersion, currentVersion);
-            return YES;
+            NSArray *versionArrayFromAppStore = [appStoreVersion componentsSeparatedByString:@"."];
+            NSArray *versionArrayFromDevice = [appStoreVersion componentsSeparatedByString:@"."];
+            
+            [self performSelector:@selector(alertMessage:) withObject:appID];
+            
+            if( versionArrayFromDevice.count ==versionArrayFromAppStore.count){
+                // Loop though each sub set convert to int and check size.. if > then .. then ignore as its new deploy and not in the app store yet.
+                
+                // Else... return YES... app needs to be updated.
+                
+            }
+            else{
+                NSLog(@"Need to update [%@ != %@]", appStoreVersion, currentVersion);
+                return YES;
+            }
         }
     }
     return NO;
 }
 
->>>>>>> Stashed changes
 @end
