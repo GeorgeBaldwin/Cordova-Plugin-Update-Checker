@@ -14,7 +14,7 @@ On App Resume, check will execute.
 
 Need to add the following to config:
 ```xml
-   ><feature name="UpdateCheck">
-   >     <param name="android-package" value="com.gbos.cordova.plugin.UpdateCheck" />
-   > </feature>
+<feature name="UpdateCheck">
+   <param name="android-package" value="com.gbos.cordova.plugin.UpdateCheck" />
+</feature>
 ```xml
