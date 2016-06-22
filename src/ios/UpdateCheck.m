@@ -8,7 +8,6 @@
 {
     NSString* callbackId = [command callbackId];
     NSString* action = [[command arguments] objectAtIndex:0];
-    
     [self needsUpdate];
     
     NSString* result = @"";
@@ -18,7 +17,9 @@
 
 - (void)pluginInitialize
 {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 - (void)finishLaunching:(NSNotification *)notification
@@ -65,14 +66,23 @@
         
         if (![appStoreVersion isEqualToString:currentVersion]){
             NSArray *versionArrayFromAppStore = [appStoreVersion componentsSeparatedByString:@"."];
-            NSArray *versionArrayFromDevice = [appStoreVersion componentsSeparatedByString:@"."];
+            NSArray *versionArrayFromDevice =  [currentVersion componentsSeparatedByString:@"."];
             
-            [self performSelector:@selector(alertMessage:) withObject:appID];
             
+            // Do the version count = the count on server ? its only way we can recurse both arrays equally.
             if( versionArrayFromDevice.count ==versionArrayFromAppStore.count){
-                // Loop though each sub set convert to int and check size.. if > then .. then ignore as its new deploy and not in the app store yet.
                 
-                // Else... return YES... app needs to be updated.
+                for (int i = 0; i < versionArrayFromDevice.count ; i++)
+                {
+                    // Assign from each array to respective variables
+                    NSInteger deviceVersion = [versionArrayFromDevice[i] integerValue];
+                    NSInteger appStoreVersion =[versionArrayFromAppStore[i] integerValue];
+                    
+                    // Does deviceVersion < app store?? if so, then we need to upgrade... otherwise if its greater or equal we dont care as its probably a dev device for future release.
+                    if (deviceVersion < appStoreVersion){
+                        [self performSelector:@selector(alertMessage:) withObject:appID];
+                    }
+                }
                 
             }
             else{
