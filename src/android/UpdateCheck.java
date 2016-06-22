@@ -3,8 +3,37 @@ package com.gbos.cordova.plugin;
 import org.apache.cordova.*;
 import org.json.JSONArray;
 import org.json.JSONException;
+import android.content.*;
+import android.os.IBinder;
 
-public class UpdateCheck extends CordovaPlugin implements ServiceConnection {
+public class UpdateCheck extends CordovaPlugin {
+
+    IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+    boolean multitasking=true;
+    BroadcastReceiver mReceiver=null;
+
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+
+        super.initialize(cordova, webView);
+        //Device.uuid = getUuid();
+        this.initReceiver();
+    }
+
+    private void initReceiver() {
+
+        this.mReceiver=new BroadcastReceiver(){
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE"))
+                {
+                    //My code
+                }
+            }
+        };
+
+        this.cordova.getActivity().registerReceiver(this.mReceiver, intentFilter);
+    }
 
     @Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
@@ -28,16 +57,18 @@ public class UpdateCheck extends CordovaPlugin implements ServiceConnection {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedIFinally,nstanceState);
-        setContentView(R.layout.activity_main);
+    public void onDestroy(){
+        super.onDestroy();
+    }
 
-        // Bind the service when the activity is created
-        getApplicationContext().bindService(new Intent(this, MetaWearBleService.class),
-                this, Context.BIND_AUTO_CREATE);
+    @Override
+    public void onResume(boolean multitask){
+        super.onResume(multitask);
+    }
 
-        // Check bundle and validate update has occured... reset flag.
 
-        
+    @Override
+    public void onStart(){
+        super.onStart();
     }
 }
