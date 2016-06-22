@@ -13,6 +13,6 @@ On App Resume, check will execute.
 ##Android
 
 Need to add the following to config:
-   <feature name="UpdateCheck">
-        <param name="android-package" value="com.gbos.cordova.plugin.UpdateCheck" />
-    </feature>
+   ><feature name="UpdateCheck">
+   >     <param name="android-package" value="com.gbos.cordova.plugin.UpdateCheck" />
+   > </feature>
