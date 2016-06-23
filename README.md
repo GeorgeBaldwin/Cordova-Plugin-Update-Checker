@@ -14,6 +14,12 @@ On App Resume, check will execute.
 
 ##Android
 
+Supports dynamically gragging current version code and verifying it with app store version. Grabbing version from HTML in google play store web address. If application is older than one on server , user will be prompter with dialog that requires them to update the application.
+
+On App Init, check will execute.
+
+On App Resume, check will execute.
+
 Need to add the following to config:
 ```xml
 <feature name="UpdateCheck">
