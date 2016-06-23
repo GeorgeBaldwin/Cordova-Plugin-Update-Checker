@@ -1,4 +1,4 @@
-# Cordova_Plugin_App_Update_Check
+# Cordova_Plugin > On Application Load, Check App Store/ Play Store and see if new version exist.
 
 Are you lookiing for a plugin that gives your tha app the ability during innitalization to check respective appstores for android and IOS and determine if an update is required? If so, then here is the plugin for you!
 
