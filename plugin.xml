@@ -39,4 +39,17 @@
     <source-file src="src/ios/UpdateCheck.m" target-dir="UpdateCheckPlugin"/>
   </platform>
 
+  <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="UpdateCheck">
+              <param name="android-package" value="com.gbos.cordova.plugin.UpdateCheck" />
+              <param name="onload" value="true" />
+          </feature>
+        </config-file>
+
+        <source-file src="com/gbos/cordova/plugin/UpdateCheck.java" target-dir="com/gbos/cordova/plugin" />
+    </platform>
+
+
+
 </plugin>
