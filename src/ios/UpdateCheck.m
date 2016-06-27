@@ -17,7 +17,7 @@
 
 - (void)pluginInitialize
 {
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
@@ -25,7 +25,6 @@
 - (void)finishLaunching:(NSNotification *)notification
 {   
     [self checkIfNewInstall]
-    [self needsUpdate];
 }
 
 -(void)checkIfNewInstall
