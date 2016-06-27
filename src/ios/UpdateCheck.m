@@ -23,11 +23,33 @@
 }
 
 - (void)finishLaunching:(NSNotification *)notification
-{
+{   
+    [self checkIfNewInstall]
     [self needsUpdate];
 }
 
-
+-(void)checkIfNewInstall
+{
+    NSDictionary* infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    NSString* appID = infoDictionary[@"CFBundleIdentifier"];
+    NSUserDefaults *preferences = [NSUserDefaults standardUserDefaults];
+    NSString *currentLevelKey = @"currentlevel";
+    if ([preferences objectForKey:currentLevelKey] == nil)
+    {
+        [preferences setString:appID forKey:currentLevelKey];
+        const BOOL didSave = [preferences synchronize];
+        if (!didSave)
+        {
+            //  Couldn't save (I've never seen this happen in real world testing)
+        }
+    }
+    else if ( [preferences objectForKey:currentLevelKey] != "")
+    {
+        // Clear cache like on android
+        //this.webView.clearCache();
+        [preferences setString:appID forKey:currentLevelKey];
+    }
+}
 -(void)openItunes
 {
     NSString *url = [NSString stringWithFormat:@"itms-apps://itunes.apple.com/app/id%@?mt=8", _appId];
