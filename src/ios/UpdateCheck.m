@@ -1,15 +1,12 @@
 #import "UpdateCheck.h"
 
 @implementation UpdateCheck
-
 @synthesize appId=_appId;
 
 - (void)check:(CDVInvokedUrlCommand*)command
 {
     NSString* callbackId = [command callbackId];
     NSString* action = [[command arguments] objectAtIndex:0];
-    [self needsUpdate];
-    
     NSString* result = @"";
     [self success:result callbackId:callbackId];
 }
@@ -18,36 +15,37 @@
 - (void)pluginInitialize
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(validateVersions:) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 - (void)finishLaunching:(NSNotification *)notification
-{   
-    [self checkIfNewInstall]
+{
+    [self checkIfNewInstall];
 }
 
 -(void)checkIfNewInstall
 {
+    NSString *AppVersion =[[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleVersion"];
     NSDictionary* infoDictionary = [[NSBundle mainBundle] infoDictionary];
-    NSString* appID = infoDictionary[@"CFBundleIdentifier"];
     NSUserDefaults *preferences = [NSUserDefaults standardUserDefaults];
-    NSString *currentLevelKey = @"currentlevel";
-    if ([preferences objectForKey:currentLevelKey] == nil)
+    NSString *SavedAppVersion =[preferences objectForKey:@"savedVersion"];
+    
+    if ( SavedAppVersion == nil)
     {
-        [preferences setString:appID forKey:currentLevelKey];
+        [preferences setValue:AppVersion forKey:@"savedVersion"];
         const BOOL didSave = [preferences synchronize];
-        if (!didSave)
-        {
-            //  Couldn't save (I've never seen this happen in real world testing)
-        }
     }
-    else if ( [preferences objectForKey:currentLevelKey] != "")
+    else if ( SavedAppVersion != AppVersion)
     {
-        // Clear cache like on android
+        //Clear cache like on android
         //this.webView.clearCache();
-        [preferences setString:appID forKey:currentLevelKey];
+        //Flush all cached data
+        [self.commandDelegate evalJs:@"localStorage.clear();"];
+        
+        [preferences setValue:AppVersion forKey:@"savedVersion"];
+        const BOOL didSave = [preferences synchronize];
     }
+    
 }
 -(void)openItunes
 {
@@ -73,11 +71,11 @@
     }
 }
 
--(BOOL) needsUpdate{
+- (void)validateVersions:(NSNotification *)notification{
+    
     NSDictionary* infoDictionary = [[NSBundle mainBundle] infoDictionary];
     NSString* appID = infoDictionary[@"CFBundleIdentifier"];
-    NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://itunes.apple.com/lookup?bundleId=%@", appID]];
-    NSData* data = [NSData dataWithContentsOfURL:url];
+    NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://itunes.apple.com/lookup?bundleId=%@", appID]]];
     NSDictionary* lookup = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     
     if ([lookup[@"resultCount"] integerValue] == 1){
@@ -89,30 +87,22 @@
             NSArray *versionArrayFromAppStore = [appStoreVersion componentsSeparatedByString:@"."];
             NSArray *versionArrayFromDevice =  [currentVersion componentsSeparatedByString:@"."];
             
-            
             // Do the version count = the count on server ? its only way we can recurse both arrays equally.
             if( versionArrayFromDevice.count ==versionArrayFromAppStore.count){
-                
                 for (int i = 0; i < versionArrayFromDevice.count ; i++)
                 {
                     // Assign from each array to respective variables
                     NSInteger deviceVersion = [versionArrayFromDevice[i] integerValue];
                     NSInteger appStoreVersion =[versionArrayFromAppStore[i] integerValue];
-                    
                     // Does deviceVersion < app store?? if so, then we need to upgrade... otherwise if its greater or equal we dont care as its probably a dev device for future release.
                     if (deviceVersion < appStoreVersion){
                         [self performSelector:@selector(alertMessage:) withObject:appID];
                     }
                 }
-                
             }
             else{
-                NSLog(@"Need to update [%@ != %@]", appStoreVersion, currentVersion);
-                return YES;
-            }
+                NSLog(@"Need to update [%@ != %@]", appStoreVersion, currentVersion);            }
         }
     }
-    return NO;
 }
-
 @end
